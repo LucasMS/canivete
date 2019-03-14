@@ -12,6 +12,9 @@ This function allows you to add transparancy to colors.
 \examples{
 add.alpha("black", 0.5)
 }
+\references{
+add.alpha funciton was made by Markus Gesmann github.com/mages, at http://www.magesblog.com/2013/04/how-to-change-alpha-value-of-colours-in.html
+}
 \keyword{alpha}
 \keyword{colors,}
 \keyword{transparency,}
