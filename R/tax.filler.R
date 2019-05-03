@@ -21,7 +21,7 @@ tax.filler <- function(df, start, end){
   for (n in cols){
     c1 <- n-1
     c2 <- n
-    for (i %in% 1:nr){
+    for (i in 1:nr){
       if (as.character(df[i, c2]) %in% c('', "NA")){
         charac.c1 <- df[i, c1]
         # if statement necessary to avoid pasting uncultured over uncultured
