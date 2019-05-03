@@ -5,26 +5,40 @@
 #' @keywords
 #' ggplot, nice plot, anova, linear model, lm
 #' @export
-#' 
+#' @details 
+#' At the moment it does not support functions with logs or transformations in the formula. transform the column in the dataframe, instead.
 #'@usage
+#' It returns a list, where the first element is a ggplot/ggarrange.
 #' df <- data.frame
-#' y <- string with the name of the y element in the formula. Column of data.
-#' x <- string with the name of the x element in the formula. Column of data or string with the formula of the linear model.
+#' formula <- formula of the model. if string, use as.formula(string)
+#' 
 #' @examples
-#' nice.lm.anova.out(alpha, "S", "Intervention.timepoint")
+#' #get results
+#' data(mtcars)
+#' f <- as.formula("mpg ~ cyl")
+#' res <- nice.lm.anova.res(formula = f, data = mtcars)
+#' res$plot
 
 
-nice.lm.anova.plot <- function (data, y, x){
+nice.lm.anova.res <- function (formula, data){
 
-  
   require(ggplot2)
   require(ggpubr)
   require(gridExtra)
   require(stringr)
+  require(broom)
+  require(formula.tools)
   require(dplyr)
   
+  # Get elements
+  f <- formula
+  f.string <- as.character(f)
+  f.string <- gsub(" ", "", f.string)
+  y = str_split(f.string, "~")[[1]][1]
+  x = str_split(f.string, "~")[[1]][2]
+  
   # Get the last variable of the formula   
-  reg <- "\\+| \\+ |\\*| \\* |\\:| \\: "  
+  reg <- "\\+|\\*|\\:"  
   if(str_detect(x, reg)){
     x.plot <- str_split(x, reg)[[1]]
     x.plot <- tail(x.plot, n=1)
@@ -34,20 +48,17 @@ nice.lm.anova.plot <- function (data, y, x){
   if(is.numeric(data[,x.plot])){
     descr <- ggplot(data, aes_string(x = x.plot , y = y)) + 
       geom_point() +
-      geom_smooth()
+      geom_smooth(method = "lm")
   }else{
   descr <- ggplot(data, aes_string(x = x.plot , y = y)) + 
     geom_boxplot()
   }
   
   # linear model
-  f <- paste(y, "~", x)
-  f <- as.formula (f)
-  
   l <- lm(f, data = data)
   
   # plot residuals vs fit
-  res.fit.plot<- augment(l) %>% 
+  res.fit.plot <- augment(l) %>% 
     ggplot(aes_string(x = ".fitted", y = ".resid", colour = x.plot)) +
     geom_point(alpha = 0.4, size = 5) + 
     geom_hline(yintercept=0,
@@ -66,7 +77,7 @@ nice.lm.anova.plot <- function (data, y, x){
   tab <- anova(l)
   tab.p <- tab %>% 
     data.frame() %>%
-    select(Df, F.value, Pr..F.) %>% 
+    dplyr::select(Df, F.value, Pr..F.) %>% 
     round(3)
   
   # Abbreviate long names
@@ -74,6 +85,9 @@ nice.lm.anova.plot <- function (data, y, x){
   
   tab.p <- tableGrob(tab.p)
   
-  p <- ggarrange(descr, tab, qqplot, res.fit.plot)
-  return(list(p, f, l, res.fit.plot, tab))
+  p <- ggarrange(descr, tab.p, qqplot, res.fit.plot)
+  
+  results <- list(p, f, l, tab)
+  names(results) <- c("plot", "formula", "model", "anova")
+  return(results)
 }
