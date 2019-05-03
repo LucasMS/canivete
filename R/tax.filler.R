@@ -21,14 +21,13 @@ tax.filler <- function(df, start, end){
   for (n in cols){
     c1 <- n-1
     c2 <- n
-    charac.c1 <- df[i, c1]
-    charac.c2 <- df[i, c2]
-    for (i in 1:nr){
-      if (charac.c2 %in% c('', "NA")){
+    for (i %in% 1:nr){
+      if (as.character(df[i, c2]) %in% c('', "NA")){
+        charac.c1 <- df[i, c1]
         # if statement necessary to avoid pasting uncultured over uncultured
         ifelse(str_detect(charac.c1, ',unc.'),
                df[i, c2] <- charac.c1,
-               df[i, c2] <- paste0( charac.c1, ',unc.')
+               df[i, c2] <- paste0(charac.c1, ',unc.')
         )
       }
     }
