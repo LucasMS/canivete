@@ -14,19 +14,21 @@ tax.filler <- function(df, start, end){
   # If start and end are one clorser to each other
   nc <- ncol(df)
   nr <- nrow(df)
-
+  
   # It need to be sorted to avoid filling gaps with empty values
   cols <- sort(seq(start, end))
-
+  
   for (n in cols){
     c1 <- n-1
     c2 <- n
+    charac.c1 <- df[i, c1]
+    charac.c2 <- df[i, c2]
     for (i in 1:nr){
-      if (df[i, c2] == '' | is.na(df[i, c2])){
+      if (charac.c2 %in% c('', "NA")){
         # if statement necessary to avoid pasting uncultured over uncultured
-        ifelse(str_detect(df[i, c1], ',unc.'),
-               df[i, c2] <- df[i, c1],
-               df[i, c2] <- paste0(df[i, c1], ',unc.')
+        ifelse(str_detect(charac.c1, ',unc.'),
+               df[i, c2] <- charac.c1,
+               df[i, c2] <- paste0( charac.c1, ',unc.')
         )
       }
     }
