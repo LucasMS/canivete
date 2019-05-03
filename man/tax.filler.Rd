@@ -7,7 +7,7 @@
 tax.filler(df, start, end)
 }
 \description{
-This function gets taxonomy df, each tax level per column, and fill the empty taxonomy levels based on the higher taxonomy hierarchy. Empty taxonomy are either NA or empty strings.
+This function gets taxonomy df, each tax level per column, and fill the empty taxonomy levels based on the higher taxonomy hierarchy. Empty taxonomy are either NA or empty strings. Data frame has to be of character type and not factors.
 }
 \examples{
 tax.filler(tax, 3,6)
