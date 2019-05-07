@@ -26,7 +26,7 @@ tax.filler <- function(df, start, end){
         if(is.na(df[i, c1])){ charac.c1 <- ""}else{
           charac.c1 <- as.character(df[i, c1])}
         # if statement necessary to avoid pasting uncultured over uncultured
-        ifelse(str_detect(charac.c1, ' (unc.)'),
+        ifelse(str_detect(charac.c1, '(unc.)'),
                df[i, c2] <- charac.c1,
                df[i, c2] <- paste0(charac.c1, ' (unc.)')
         )
